@@ -9,6 +9,10 @@
  * Author: dalva
  *
  * Created on November 13, 2020, 12:59 PM
+ * 
+ * WARNING
+ * while de 3 guindado :(
+ * Te he fallado xd
  */
 
 #include <cstdlib>
@@ -40,7 +44,6 @@ vector<int**> matricesVector;
 vector<int> filasMatrices;
 vector<int> columnasMatrices;
 vector<string> operaciones;
-vector<int**> matrizTemp;
 
 int main(int argc, char** argv) {
 
@@ -195,6 +198,7 @@ int main(int argc, char** argv) {
                 bool terminoCalculo = false;
                 bool result = false;
                 while (!terminoCalculo) {
+                    cout << "Inside while" << endl;
 
                     for (int i = 0; i < operaciones.size(); i++) {
 
@@ -229,9 +233,12 @@ int main(int argc, char** argv) {
                         }
                     }
 
-
+                    cout << "Toy trabado :v" << endl;
                 }
-
+                
+                operaciones.clear();
+                
+                
                 break;
 
             }

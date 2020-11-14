@@ -29,11 +29,13 @@ bool sumarMatrices(string);
 bool multMatrices(string);
 bool restaMatrices(string);
 int** crearArraySuma(int , int);
+void printSinglMatrix(int**, int, int);
 
 /*
  * 
  */
 
+//variables de clase
 vector<int**> matricesVector;
 vector<int> filasMatrices;
 vector<int> columnasMatrices;
@@ -52,7 +54,7 @@ int main(int argc, char** argv) {
 
             case 1:
             {
-
+                //generacion manual de matriz
                 cout << "Ingreso Manual de matriz" << endl << endl;
 
                 int filas = 0;
@@ -95,7 +97,7 @@ int main(int argc, char** argv) {
             }
             case 2:
             {
-
+                //generacion de matriz automatica
                 cout << "Ingreso automatico de matriz" << endl << endl;
 
                 int filas = 0;
@@ -139,9 +141,13 @@ int main(int argc, char** argv) {
             }
             case 3:
             {
+                //solucion 
                 cout << "Operaciones con las matrices" << endl;
 
                 string operacion = "";
+                
+                cout << "Estas son todas las matrices generadas" << endl;
+                imprimirMatriz();
 
                 cout << "Ingrese la operacion que desea realizar: ";
                 cin >> operacion;
@@ -186,8 +192,6 @@ int main(int argc, char** argv) {
                     }
                 }
 
-                int cantVector = matricesVector.size();
-
                 bool terminoCalculo = false;
                 bool result = false;
                 while (!terminoCalculo) {
@@ -197,9 +201,12 @@ int main(int argc, char** argv) {
                         string calc = operaciones.at(i);
 
                         if (calc.find('*') == true) {
-                            ///mult
+                            
+                            result = multMatrices(calc);
 
-                            //operaciones.erase(i);
+                            if(result == false){
+                                terminoCalculo = true;
+                            }
 
                         } else if (calc.find('+') == true) {
                             result = sumarMatrices(calc);
@@ -207,17 +214,18 @@ int main(int argc, char** argv) {
                             if(result == false){
                                 terminoCalculo = true;
                             }
-                            
-                            int n = matricesVector.size()-1;
-                            
-                            //operaciones = operaciones.replace(calc, n);
-
-                            //operaciones.erase(i);
-
+                           
                         } else if (calc.find('-') == true) {\
                             //resta
-
-                            //peraciones.erase(i);
+                            
+                            result = restaMatrices(calc);
+                            
+                            
+                            if(result == false){
+                                terminoCalculo = true;
+                            }
+                            
+                            
                         }
                     }
 
@@ -245,6 +253,103 @@ int main(int argc, char** argv) {
 //multiplica 2 matrices si fila de 1 es igual a columna de otra
 bool multMatrices(string calc){
     
+    int matriz = calc[0];
+    int matriz2 = calc[2];
+    
+    if(matriz >= matricesVector.size() || matriz2 >= matricesVector.size()){
+        cout << "Una de las matrices no existe en el vector" << endl;
+        
+        return false;
+    }else{
+        
+        
+        if(columnasMatrices.at(matriz) == filasMatrices.at(matriz2)){
+            
+            int fila = filasMatrices.at(matriz);
+            int columna = columnasMatrices.at(matriz);
+            int fila2 = filasMatrices.at(matriz2);
+            int columna2 = columnasMatrices.at(matriz2);
+            
+            int** matrix = matricesVector.at(matriz);
+            int** matrix2 = matricesVector.at(matriz2);
+            
+            int** multMatriz = crearArraySuma(columna, fila2);
+            
+            
+            for(int i = 0; i < columna; i++){
+                for(int j = 0; j < fila2; j++){
+                    
+                    int result = 0;
+                    
+                    for(int k = 0; k < columna; k++){
+                        result += matrix[i][k] * matrix2[k][i];
+                    }
+                    
+                    multMatriz[i][j] = result;
+                }
+            }
+            
+            cout << "Este es el resultado: ";
+            printSinglMatrix(multMatriz, columna, fila2);
+            
+            matricesVector.push_back(multMatriz);
+            return true;
+            
+        }else{
+            cout << "Las matrices no tienen las dimensiones apropiadas" << endl;
+            return false;
+        }
+    }
+    
+}
+
+
+//resta dos matrices dadas si sus tam son iguales
+bool restaMatrices(string calc){
+    
+    int matriz = calc[0];
+    int matriz2 = calc[2];
+    
+    if(matriz > matricesVector.size() || matriz2 > matricesVector.size()){
+        cout << "Las matrices ingresadas no son correctas" << endl;
+        return false;
+    }else{
+        
+        if(filasMatrices.at(matriz) == filasMatrices.at(matriz2) 
+                && columnasMatrices.at(matriz) == columnasMatrices.at(matriz2)){
+            
+            
+            int fila = filasMatrices.at(matriz);
+            int columna = columnasMatrices.at(matriz);
+            
+            int** matrix = matricesVector.at(matriz);
+            int** matrix2 = matricesVector.at(matriz2);
+            
+            int** restMatrices = NULL;
+            restMatrices = crearArraySuma(fila, columna);
+            
+            for(int i = 0; i < fila ; i++){
+                for(int j = 0; j < columna ; j++){
+                    
+                    int num = (-1 * matrix2[i][j]);
+                    restMatrices[i][j] = matrix[i][j] + num;
+                }
+            }
+            
+            cout << "Este es el resultado: ";
+            printSinglMatrix(restMatrices, fila, columna);
+            
+            
+            matricesVector.push_back(restMatrices);
+            
+            
+            return true;
+            
+        }else{
+            cout << "Las matrices no son del mismo tam..." << endl; 
+            return false;
+        }
+    }
 }
 
 //crea una matriz vacia de enteros
@@ -295,9 +400,14 @@ bool sumarMatrices(string calc) {
             }
 
             matricesVector.push_back(matrizSuma);
+            
+            cout << "Este es el resultado: " << endl;
+            printSinglMatrix(matrizSuma, fila, columna);
+            
             return true;
 
         } else {
+            cout << "Las dimensiones delas matrices no son iguales...";
             return false;
         }
 
@@ -344,7 +454,7 @@ int** genMatrizAuto(int filas, int columnas) {
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
 
-            matriz[i][j] = 1 + (rand() % 50);
+            matriz[i][j] = 1 + (rand() % 101 - 49) ;
         }
     }
 
@@ -375,6 +485,19 @@ int** genMatrizManual(int filas, int columnas) {
     return matriz;
 }
 
+//imprime solo 1 matriz
+void printSinglMatrix(int** matrix, int fila, int columna){
+    
+    for(int i = 0; i < fila; i++){
+        for(int j = 0; j < columna; j++){
+            cout << "[" << matrix[i][j] << "] \t";
+        }
+        cout << endl;
+    }
+    
+    cout << endl << endl;
+}
+
 //imprime todas las matrices en el vector
 
 void imprimirMatriz() {
@@ -388,8 +511,8 @@ void imprimirMatriz() {
         cout << "Matriz #" << i << endl;
 
         for (int j = 0; j < fila; j++) {
-            for (int k = 0; k < fila; k++) {
-                cout << "[" << matriz[i][j] << "]\t";
+            for (int k = 0; k < columna; k++) {
+                cout << "[" << matriz[j][k] << "]\t";
             }
             cout << endl;
         }
